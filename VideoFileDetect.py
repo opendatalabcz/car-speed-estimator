@@ -12,7 +12,7 @@ detection = object_detection()
 n = 0
 while cap.isOpened():
     n = n + 1
-    ret, frame = cap.read()
+    frame = cap.read()
     if n == 10:
         n = 0
         frame = detection.detect_objects(frame, 0.6, True)

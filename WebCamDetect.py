@@ -16,7 +16,7 @@ detection = object_detection()
 while True:
     frame = vs.read()
     frame = imutils.resize(frame, width=400)
-    frame = detection.detect_objects(frame, 0.6)
+    frame = detection.detect_objects(frame, 0.6, False)
 
     cv2.imshow("Frame", frame)
     key = cv2.waitKey(1) & 0xFF
