@@ -13,6 +13,7 @@ height, width, channels = img.shape
 img = cv2.resize(img,(int(width/2),int(height/2)))
 
 img = detection.detect_objects(img, 0.6, True)
+print(img)
 cv2.imshow("Frame", img)
 
 while True:

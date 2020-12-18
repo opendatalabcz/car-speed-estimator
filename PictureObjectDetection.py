@@ -5,6 +5,8 @@ class object_detection:
 
     def __init__(self):
         self.net = cv2.dnn.readNet("Data/yolov3.weights", "yolov3.cfg")
+#        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
+#        self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         self.classes = []
         with open("Data/coco.names", "r") as f:
             self.classes = [line.strip() for line in f.readlines()]
