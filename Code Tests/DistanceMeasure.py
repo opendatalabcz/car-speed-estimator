@@ -1,14 +1,11 @@
-import numpy as np
-import argparse
-import imutils
 import time
 import cv2
-from PictureObjectDetection import object_detection
+from Data.PictureObjectDetection import object_detection
 
 time.sleep(2.0)
 detection = object_detection()
 
-img = cv2.imread("Data/autobok10.jpg")
+img = cv2.imread("../Data/autobok10.jpg")
 height, width, channels = img.shape
 img = cv2.resize(img,(int(width/2),int(height/2)))
 

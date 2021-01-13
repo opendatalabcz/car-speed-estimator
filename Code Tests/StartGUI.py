@@ -1,14 +1,7 @@
-import numpy as np
-import argparse
-import imutils
-import time
 import cv2
-import os
 import tkinter as tk
-from tkinter import filedialog, Text
-from PictureObjectDetection import object_detection
-from imutils.video import VideoStream
-from imutils.video import FPS
+from tkinter import filedialog
+from Data.PictureObjectDetection import object_detection
 
 videoFile = ""
 detection = object_detection()

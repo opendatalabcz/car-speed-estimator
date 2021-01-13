@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from time import sleep
 import imutils
 
 cap = cv2.VideoCapture("Data/cam_2_rain.mp4")
@@ -16,6 +17,9 @@ avg = np.float32(f)
 while cap.isOpened():
     frame = cap.read()[1]
     scene_counter = scene_counter + 1
+
+    tempo = float(1 / 60)
+    sleep(tempo)
 
     background = (background + frame)/2
     cv2.imshow('Real Frame', frame)

@@ -2,13 +2,10 @@ from imutils.video import VideoStream
 from imutils.video import FPS
 from queue import Queue
 import threading
-import concurrent.futures
-import numpy as np
-import argparse
 import imutils
 import time
 import cv2
-from PictureObjectDetection import object_detection
+from Data.PictureObjectDetection import object_detection
 
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
