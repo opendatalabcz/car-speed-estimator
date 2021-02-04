@@ -1,5 +1,5 @@
 import cv2
-from Data.PictureObjectDetection import object_detection
+from PictureObjectDetection import object_detection
 from multiprocessing import Process, Queue
 
 def detections(qIn,qOut):

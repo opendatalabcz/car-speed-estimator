@@ -1,5 +1,5 @@
 import cv2
-from Data.PictureObjectDetection import object_detection
+from PictureObjectDetection import object_detection
 
 cap = cv2.VideoCapture("Data/TestCam.mp4")
 detection = object_detection()

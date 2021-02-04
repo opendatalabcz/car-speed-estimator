@@ -1,6 +1,6 @@
 import time
 import cv2
-from Data.PictureObjectDetection import object_detection
+from PictureObjectDetection import object_detection
 
 time.sleep(2.0)
 detection = object_detection()

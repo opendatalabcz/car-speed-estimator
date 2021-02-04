@@ -21,7 +21,7 @@ class manager:
                 position = position + 1
             else:
                 self.points.pop(position)
-        self.print()
+#        self.print()
         self.erase_control()
 
     def check(self, x, y):
