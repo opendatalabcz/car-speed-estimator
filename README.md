@@ -1,26 +1,21 @@
-Base.py - Prvni pokus z praci s detekci objektu. 
-Nyni uz kompletne nahrazeno skriptem PictureObjectDetection.
+YoloObjDet.py - Spousteci skript na kterem bezi program. 
+Obsahuje tridu Speed meter ktera se spousti funkci "run"
+Jsou dve moznosti spousteni. Rozdil je ve zpusobu trackovani vozidla. 
+Prvni vyuziva euklidovskou vzdalenost, druhy pouzivat opticky proud.
 
-PictureObjectDetection.py - obsahuje třídu Object_detection.
-Tato třida dokaže ve v obrazku vyhledatvat objekty.
+tracker.py - obsahuje třidu EuclideanDistTracker a OpticalFlowTracker.
+Jsou to třídy určené pro trackování vozidel.
+Rozdíl je ve způsobu trackování vozidel jak bylo popsáno výše
 
-VideoDetect.py - scrip ktery se napoji na webcameru a dela na ni detekci objektu.
-Nyni nahrazen scriptem WebCamDetect.py
+LPFinder.py - funkce pro vyhledání vhodného bodu pro sledování v optickém proudu
 
-WebCamDetect.py - Dela to same jako VideoDetect.py. 
-Využiva však pro detekci script PictureObjectDetection.py a tedy na nem zavisi
-V tomto scriptu se delaly vice-vlaknove testy
+LPTest.py - testovací skript pro LPFinder
 
-WebCamDetect.py - Dela to same jako VideoDetect.py. 
-Využiva však pro detekci script PictureObjectDetection.py a tedy na nem zavisi
+PictureObjectDetection.py - obsahuje třídu object_detection. Třída slouží pro
+detekci objektů v obraze.
 
-VideoFileDetect.py - Provadi detekci objektu na videem.
-Pro urychleni prace ji provadi pouze nad kazdym 10tym snimkem.
-
-DistanceMeasure.py - Testovaci script pro detekci objektu v obrazku a mereni jeho vzdalenosti
-
-VideoFileBackgroundSubstration.py
-Použití metody odstranění pozadí na video
+Slozka Code Tests obsahuje pokusne kody na kterych byla testovani jejich funkcnost
+Na funci konecneho programu nemaji zadny vliv
 
 Pro vsechny scripty plati ze pro jejich spravne ukonceni je treba stiknout klavesu "q"
 Potrebna data si scripty berou ze slozky Data ktera neni soucasti programu.

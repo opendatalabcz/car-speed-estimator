@@ -56,9 +56,11 @@ class object_detection:
         boxes_ret = []
         for i in indexes:
             x, y, w, h = boxes[int(i)]
-            boxes_ret.append(boxes[int(i)])
             label = str(self.classes[class_ids[int(i)]])
+            if label != "car" and label != "truck" and label != "motorbike" and label != "bus":
+                continue
 
+            boxes_ret.append(boxes[int(i)])
             if(count_distance):
                 distance = self.__distance(height, h)
                 label = label + " " + str(round(distance, 2))
