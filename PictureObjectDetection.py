@@ -65,7 +65,8 @@ class object_detection:
                 distance = self.__distance(height, h)
                 label = label + " " + str(round(distance, 2))
 
-            color = self.colors[class_ids[int(i)]]
+#            color = self.colors[class_ids[int(i)]]
+            color = (0, 0, 255)
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 #            cv2.putText(img, label, (x, y - 10), font, 1.5, (0, 0, 150), 2)
 
