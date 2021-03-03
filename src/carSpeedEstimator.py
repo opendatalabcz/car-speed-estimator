@@ -31,7 +31,7 @@ class CarSpeedEstimator:
             roi = frame[y: y + h, x: x + w]
 
             #   Object detection
-            roi, boxes = self.Detection.detect_objects(roi, 0.6, False)
+            roi, boxes = self.Detection.detect_objects(roi, 0.6)
 
             #   Update tracker
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

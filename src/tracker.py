@@ -76,7 +76,7 @@ class OpticalPointTracker:
             # If new object is detected we assign the ID to that object
             if same_object_detected is False:
                 object_img = gray_frame[y:y + h, x:x + w]
-                px, py = LPFinder.FindLP3(object_img)
+                px, py = LPFinder.FindLP(object_img)
                 self.optical_points[self.id_count] = ([x + px, y + py])
                 objects_bbs_ids.append([x, y, x + px, y + py, self.id_count])
                 speed[self.id_count] = 0

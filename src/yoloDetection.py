@@ -5,8 +5,6 @@ class object_detection:
 
     def __init__(self):
         self.net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
-        self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
-        self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         self.classes = []
         with open("coco.names", "r") as f:
             self.classes = [line.strip() for line in f.readlines()]
@@ -14,14 +12,7 @@ class object_detection:
         self.outputlayers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
         self.colors = np.random.uniform(0, 255, size=(len(self.classes), 3))
 
-    def __distance(self, img_height, object_height):
-        focal_lenght = 31
-        sensor_size = focal_lenght/2.4
-        r_height = 1470
-        ret = (focal_lenght * r_height * img_height) / (sensor_size * object_height)
-        return ret
-
-    def detect_objects(self, img, confidence_lvl, count_distance):
+    def detect_objects(self, img, confidence_lvl):
         blob = cv2.dnn.blobFromImage(img, 0.00392, (416, 416), (0, 0, 0), True, crop=False)
         self.net.setInput(blob)
         outs = self.net.forward(self.outputlayers)
@@ -52,8 +43,8 @@ class object_detection:
                     class_ids.append(class_id)
 
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.5, 0.4)
-        font = cv2.FONT_HERSHEY_PLAIN
         boxes_ret = []
+
         for i in indexes:
             x, y, w, h = boxes[int(i)]
             label = str(self.classes[class_ids[int(i)]])
@@ -61,14 +52,8 @@ class object_detection:
                 continue
 
             boxes_ret.append(boxes[int(i)])
-            if(count_distance):
-                distance = self.__distance(height, h)
-                label = label + " " + str(round(distance, 2))
-
-#            color = self.colors[class_ids[int(i)]]
             color = (0, 0, 255)
             cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
-#            cv2.putText(img, label, (x, y - 10), font, 1.5, (0, 0, 150), 2)
 
         return img, boxes_ret
 
