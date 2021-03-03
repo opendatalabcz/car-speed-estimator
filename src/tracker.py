@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from src import LPFinder as LPFinder
-from src.SpeedMeter import *
+from src.speedMeasure import *
 
 class OpticalPointTracker:
     def __init__(self, gray, line1, line2):
@@ -13,8 +13,9 @@ class OpticalPointTracker:
         self.old_gray = gray
         y1 = line1[0][1]
         y2 = line2[0][1]
-        self.speedEst = SpeedEstimator(y1, y2)
+        self.speedEst = SpeedMeasure(y1, y2)
 
+    #   Find if points is outside of region of interest
     def point_outside(self, point, roi_params):
         ret = False
         x, y, w, h = roi_params
@@ -23,30 +24,41 @@ class OpticalPointTracker:
             ret = True
         return ret
 
+    #   Update tracker and get speed for each car
     def update(self, objects_rect, gray_frame, roi_param):
-        # Calculate new points
-        points = []
-        ids = []
+        objects_bbs_ids = []
         speed = {}
+
+        #   If we already have points to follow
         if self.optical_points.items():
+
+            #   Split id and points
+            points = []
+            ids = []
             for id, pt in self.optical_points.items():
                 points.append(pt)
                 ids.append(id)
+
+            #   Calculate new position of points
             prepared_optical_points = np.array(points, dtype=np.float32)
             new_points, _, _ = cv2.calcOpticalFlowPyrLK(self.old_gray, gray_frame,
                                                         prepared_optical_points, None, **self.lk_params)
-            # Match points and ids
+
+            #   Match points and ids
             new_optical_points = {}
             for i in range(len(ids)):
                 new_optical_points[ids[i]] = new_points[i]
+
+            #   Remove points outside of region of interes0
             self.optical_points = {}
-            # Filter points outside of region of interest
             for id, point in new_optical_points.items():
                 if self.point_outside(point, roi_param):
                     self.optical_points[id] = point
-            speed = self.speedEst.estimate_speed(self.optical_points)
 
-        objects_bbs_ids = []
+            #   Get point speed
+            speed = self.speedEst.measure_speed(self.optical_points)
+
+        #   Find match rectangles and points
         for rect in objects_rect:
             x, y, w, h = rect
             x = x + roi_param[0]
@@ -61,7 +73,7 @@ class OpticalPointTracker:
                         same_object_detected = True
                         break
 
-            # New object is detected we assign the ID to that object
+            # If new object is detected we assign the ID to that object
             if same_object_detected is False:
                 object_img = gray_frame[y:y + h, x:x + w]
                 px, py = LPFinder.FindLP3(object_img)
@@ -70,5 +82,6 @@ class OpticalPointTracker:
                 speed[self.id_count] = 0
                 self.id_count += 1
 
+        #   Save frame for next step
         self.old_gray = gray_frame
         return objects_bbs_ids, speed
