@@ -1,8 +1,6 @@
-import cv2
-import numpy as np
-from PointManager import manager
-from PictureObjectDetection import object_detection
-from tracker import *
+from src.PointManager import manager
+from src.PictureObjectDetection import object_detection
+from src.tracker import *
 import time
 
 

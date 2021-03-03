@@ -6,7 +6,7 @@ NMS_THRESHOLD = 0.4
 COLORS = [(0, 255, 255), (255, 255, 0), (0, 255, 0), (255, 0, 0)]
 
 class_names = []
-with open("../Data/coco.names", "r") as f:
+with open("../../Data/coco.names", "r") as f:
     class_names = [cname.strip() for cname in f.readlines()]
 
 vc = cv2.VideoCapture("Data/cam_6.mp4")

@@ -1,7 +1,5 @@
-import cv2
-from PictureObjectDetection import object_detection
-from tracker import *
-import numpy as np
+from src.PictureObjectDetection import object_detection
+from src.tracker import *
 
 
 class SpeedMeter:
@@ -16,7 +14,7 @@ class SpeedMeter:
         # Optical flow preparation
         _, frame = cap.read()
         old_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        self.tracker = OpticalPointTracker(old_gray)
+        self.tracker = OpticalPointTracker(old_gray, self.first_line, self.second_line)
 
         # Video output preparation
         frame_width = int(cap.get(3))

@@ -1,7 +1,7 @@
 import cv2
 import tkinter as tk
 from tkinter import filedialog
-from PictureObjectDetection import object_detection
+from src.PictureObjectDetection import object_detection
 
 videoFile = ""
 detection = object_detection()

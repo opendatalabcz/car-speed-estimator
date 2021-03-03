@@ -8,7 +8,7 @@ class object_detection:
         self.net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
         self.net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
         self.classes = []
-        with open("Data/coco.names", "r") as f:
+        with open("../Data/coco.names", "r") as f:
             self.classes = [line.strip() for line in f.readlines()]
         layer_names = self.net.getLayerNames()
         self.outputlayers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
