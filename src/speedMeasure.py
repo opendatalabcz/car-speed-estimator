@@ -1,16 +1,17 @@
-import math
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 
 class SpeedMeasure:
 
-    def __init__(self, y_first_line, y_second_line):
-        if y_first_line < y_second_line:
-            self.line1 = y_first_line
-            self.line2 = y_second_line
-        else:
-            self.line1 = y_second_line
-            self.line2 = y_first_line
+    def __init__(self, first_line, second_line):
         self.fps = 30
         self.list = {}
+        self.area = Polygon([first_line[0], first_line[1], second_line[1], second_line[0]])
+
+    def in_area(self, point):
+        p = Point(point[0], point[1])
+        return self.area.contains(p)
 
     # mesure speed for each point
     def measure_speed(self, points):
@@ -19,16 +20,15 @@ class SpeedMeasure:
 
             # If point is not new
             if id in self.list:
-
-                #   If points is inside or measuring area
-                if self.line1 < pt[1] < self.line2:
+                #   If points is inside of measuring area
+                if self.in_area(pt):
                     self.list[id][0] = self.list[id][0] + 1
                     ret[id] = self.list[id][1]
                 else:
 
                     #   If points just left measuring area
                     if self.list[id][0] != 0:
-                        self.list[id][1] = int(10/(self.list[id][0]/self.fps) * 3.6)
+                        self.list[id][1] = int(10 / (self.list[id][0] / self.fps) * 3.6)
                         self.list[id][0] = 0
                 ret[id] = self.list[id][1]
 

@@ -11,9 +11,7 @@ class OpticalPointTracker:
                               maxLevel=2,
                               criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
         self.old_gray = gray
-        y1 = line1[0][1]
-        y2 = line2[0][1]
-        self.speedEst = SpeedMeasure(y1, y2)
+        self.speedEst = SpeedMeasure(line1, line2)
 
     #   Find if points is outside of region of interest
     def point_outside(self, point, roi_params):
