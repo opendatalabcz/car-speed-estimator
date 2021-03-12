@@ -4,14 +4,14 @@ from src import LPFinder as LPFinder
 from src.speedMeasure import *
 
 class OpticalPointTracker:
-    def __init__(self, gray, line1, line2):
+    def __init__(self, gray, line1, line2, length):
         self.optical_points = {}
         self.id_count = 0
         self.lk_params = dict(winSize=(15, 15),
                               maxLevel=2,
                               criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
         self.old_gray = gray
-        self.speedEst = SpeedMeasure(line1, line2)
+        self.speedEst = SpeedMeasure(line1, line2, length)
 
     #   Find if points is outside of region of interest
     def point_outside(self, point, roi_params):

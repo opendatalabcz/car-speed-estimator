@@ -2,6 +2,6 @@ src/Data/
 src/Code Tests/
 venv/
 __pycache__/
-src/yolov3.cfg
-src/yolov3.weights
-src/coco.names
+yolov3.cfg
+yolov3.weights
+coco.names

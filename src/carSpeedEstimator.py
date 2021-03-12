@@ -2,18 +2,18 @@ from src.yoloDetection import object_detection
 from src.tracker import *
 
 class CarSpeedEstimator:
-    def __init__(self, video):
+    def __init__(self, video, start_line, end_line, length):
         self.cap = video
         self.Detection = object_detection()
         self.frame_counter = 0
         self.roi_param = [150, 50, 550, 450]
-        self.first_line = [(330, 100), (550, 100)]
-        self.second_line = [(300, 150), (600, 150)]
+        self.first_line = start_line
+        self.second_line = end_line
 
         #   Optical flow preparation
         _, frame = self.cap.read()
         old_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        self.tracker = OpticalPointTracker(old_gray, self.first_line, self.second_line)
+        self.tracker = OpticalPointTracker(old_gray, self.first_line, self.second_line, length)
 
         #   Video output preparation
         frame_width = int(self.cap.get(3))
@@ -44,8 +44,9 @@ class CarSpeedEstimator:
             #   Name boxes
             for box_id in boxes_ids:
                 x, y, px, py, id = box_id
-                text = str(speed[id])
-                cv2.putText(frame, text, (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
+                if speed[id] != 0:
+                    text = str(speed[id])
+                    cv2.putText(frame, text, (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
                 cv2.circle(frame, (px, py), 3, (0, 255, 0), -1)
 
             #   Show and save frame
@@ -59,3 +60,4 @@ class CarSpeedEstimator:
         self.cap.release()
         cv2.destroyAllWindows()
         print("Hotovo")
+        return True

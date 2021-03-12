@@ -4,9 +4,10 @@ from shapely.geometry.polygon import Polygon
 
 class SpeedMeasure:
 
-    def __init__(self, first_line, second_line):
+    def __init__(self, first_line, second_line, length):
         self.fps = 30
         self.list = {}
+        self.length = length
         self.area = Polygon([first_line[0], first_line[1], second_line[1], second_line[0]])
 
     def in_area(self, point):
@@ -28,7 +29,7 @@ class SpeedMeasure:
 
                     #   If points just left measuring area
                     if self.list[id][0] != 0:
-                        self.list[id][1] = int(10 / (self.list[id][0] / self.fps) * 3.6)
+                        self.list[id][1] = int(self.length / (self.list[id][0] / self.fps) * 3.6)
                         self.list[id][0] = 0
                 ret[id] = self.list[id][1]
 
