@@ -36,6 +36,7 @@ class Root(Tk):
         e_line_pt2_x = int(self.e_line_pt2_x.get())
         e_line_pt2_y = int(self.e_line_pt2_y.get())
         frame = self.frame_original.copy()
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         cv2.line(frame, (s_line_pt1_x, s_line_pt1_y), (s_line_pt2_x, s_line_pt2_y), (0, 255, 0), 2)
         cv2.line(frame, (e_line_pt1_x, e_line_pt1_y), (e_line_pt2_x, e_line_pt2_y), (0, 0, 255), 2)
         self.image = ImageTk.PhotoImage(image=Image.fromarray(frame))
@@ -119,7 +120,8 @@ class Root(Tk):
         self.frame_rd = True
         width = int(self.cap.get(3))
         height = int(self.cap.get(4))
-        self.image = ImageTk.PhotoImage(image=Image.fromarray(frame))
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        self.image = ImageTk.PhotoImage(image= Image.fromarray(frame))
         self.canvas = tkinter.Canvas(self.labelFrame, width=width, height=height)
         self.canvas.grid(column=1, row=3)
         self.canvas.create_image(0, 0, image=self.image, anchor=tkinter.NW)

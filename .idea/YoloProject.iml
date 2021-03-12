@@ -4,6 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/Data" />
       <excludeFolder url="file://$MODULE_DIR$/src/Code Tests" />
+      <excludeFolder url="file://$MODULE_DIR$/src/Data" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.8 (YoloProject)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
