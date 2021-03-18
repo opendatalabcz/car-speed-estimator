@@ -2,10 +2,12 @@ import cv2
 import numpy as np
 from src import LPFinder as LPFinder
 from src.speedMeasure import *
+from src.vehicle import vehicle
 
 class OpticalPointTracker:
     def __init__(self, gray, line1, line2, length):
         self.optical_points = {}
+        self.vehicles = {}
         self.id_count = 0
         self.lk_params = dict(winSize=(15, 15),
                               maxLevel=2,
@@ -13,17 +15,17 @@ class OpticalPointTracker:
         self.old_gray = gray
         self.speedEst = SpeedMeasure(line1, line2, length)
 
-    #   Find if points is outside of region of interest
-    def point_outside(self, point, roi_params):
+    #   Find if points is outside of frame
+    def point_outside(self, point, frame_params):
         ret = False
-        x, y, w, h = roi_params
+        x, y, w, h = frame_params
         x1, y1 = point
         if x < x1 < x + w and y < y1 < y + h:
             ret = True
         return ret
 
     #   Update tracker and get speed for each car
-    def update(self, objects_rect, gray_frame, roi_param):
+    def update(self, objects_rect, gray_frame, frame_param):
         objects_bbs_ids = []
         speed = {}
 
@@ -47,11 +49,12 @@ class OpticalPointTracker:
             for i in range(len(ids)):
                 new_optical_points[ids[i]] = new_points[i]
 
-            #   Remove points outside of region of interes0
+            #   Remove points outside of frame
             self.optical_points = {}
             for id, point in new_optical_points.items():
-                if self.point_outside(point, roi_param):
+                if self.point_outside(point, frame_param):
                     self.optical_points[id] = point
+                    self.vehicles[id].update_point(point)
 
             #   Get point speed
             speed = self.speedEst.measure_speed(self.optical_points)
@@ -59,24 +62,24 @@ class OpticalPointTracker:
         #   Find match rectangles and points
         for rect in objects_rect:
             x, y, w, h = rect
-            x = x + roi_param[0]
-            y = y + roi_param[1]
 
             # Find out if that object was detected already
             same_object_detected = False
             if self.optical_points.items():
                 for id, pt in self.optical_points.items():
                     if x < pt[0] < x + w and y < pt[1] < y + h:
-                        objects_bbs_ids.append([x, y, pt[0], pt[1], id])
+                        self.vehicles[id].update_rect(rect)
+                        objects_bbs_ids.append(self.vehicles[id].get_info())
                         same_object_detected = True
                         break
 
             # If new object is detected we assign the ID to that object
             if same_object_detected is False:
-                object_img = gray_frame[y:y + h, x:x + w]
-                px, py = LPFinder.FindLP(object_img)
-                self.optical_points[self.id_count] = ([x + px, y + py])
-                objects_bbs_ids.append([x, y, x + px, y + py, self.id_count])
+                tmp_vehicle = vehicle(rect, self.id_count)
+                tmp_vehicle.create_points(gray_frame)
+                self.vehicles[self.id_count] = tmp_vehicle
+                self.optical_points[self.id_count] = tmp_vehicle.get_point()
+                objects_bbs_ids.append(tmp_vehicle.get_info())
                 speed[self.id_count] = 0
                 self.id_count += 1
 

@@ -53,7 +53,7 @@ class object_detection:
 
             boxes_ret.append(boxes[int(i)])
             color = (0, 0, 255)
-            cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
+#            cv2.rectangle(img, (x, y), (x + w, y + h), color, 2)
 
         return img, boxes_ret
 

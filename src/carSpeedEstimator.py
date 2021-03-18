@@ -6,7 +6,6 @@ class CarSpeedEstimator:
         self.cap = video
         self.Detection = object_detection()
         self.frame_counter = 0
-        self.roi_param = [150, 50, 550, 450]
         self.first_line = start_line
         self.second_line = end_line
 
@@ -20,26 +19,29 @@ class CarSpeedEstimator:
         frame_height = int(self.cap.get(4))
         self.out = cv2.VideoWriter("Result.avi", cv2.VideoWriter_fourcc('M', 'J', 'P', 'G'),
                                    30, (frame_width, frame_height))
+        self.frame_param = [0, 0, frame_width, frame_height]
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS)
 
     def run(self):
         while True:
-
             #   Frame preparation
             self.frame_counter = self.frame_counter + 1
             _, frame = self.cap.read()
-            x, y, w, h = self.roi_param
-            roi = frame[y: y + h, x: x + w]
-
             #   Object detection
-            roi, boxes = self.Detection.detect_objects(roi, 0.6)
+            frame, boxes = self.Detection.detect_objects(frame, 0.6)
 
             #   Update tracker
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            boxes_ids, speed = self.tracker.update(boxes, gray_frame, self.roi_param)
+            boxes_ids, speed = self.tracker.update(boxes, gray_frame, self.frame_param)
 
             #   Draw Lines
             cv2.line(frame, self.first_line[0], self.first_line[1], (0, 0, 250), 2)
             cv2.line(frame, self.second_line[0], self.second_line[1], (0, 0, 250), 2)
+
+            #   Create boxes
+            for box in boxes:
+                x, y, w, h = box
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 250), 2)
 
             #   Name boxes
             for box_id in boxes_ids:
@@ -51,10 +53,10 @@ class CarSpeedEstimator:
 
             #   Show and save frame
             self.out.write(frame)
-            cv2.imshow("frame", roi)
+            cv2.imshow("frame", frame)
             key = cv2.waitKey(1)
             print(self.frame_counter)
-            if key == 27 or self.frame_counter > 1200:
+            if key == 27 or self.frame_counter > self.fps*60:
                 break
 
         self.cap.release()
