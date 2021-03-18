@@ -30,7 +30,7 @@ class OpticalPointTracker:
         speed = {}
 
         #   If we already have points to follow
-        if self.optical_points.items():
+        if self.vehicles.items():
 
             #   Split id and points
             points = []
@@ -55,6 +55,8 @@ class OpticalPointTracker:
                 if self.point_outside(point, frame_param):
                     self.optical_points[id] = point
                     self.vehicles[id].update_point(point)
+                else:
+                    self.vehicles.pop(id, None)
 
             #   Get point speed
             speed = self.speedEst.measure_speed(self.optical_points)
@@ -65,11 +67,12 @@ class OpticalPointTracker:
 
             # Find out if that object was detected already
             same_object_detected = False
-            if self.optical_points.items():
-                for id, pt in self.optical_points.items():
+            if self.vehicles.items():
+                for _, car in self.vehicles.items():
+                    pt = car.get_point()
                     if x < pt[0] < x + w and y < pt[1] < y + h:
-                        self.vehicles[id].update_rect(rect)
-                        objects_bbs_ids.append(self.vehicles[id].get_info())
+                        car.update_rect(rect)
+                        objects_bbs_ids.append(car.get_info())
                         same_object_detected = True
                         break
 
