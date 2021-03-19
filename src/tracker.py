@@ -5,23 +5,22 @@ from src.speedMeasure import *
 from src.vehicle import vehicle
 
 class OpticalPointTracker:
-    def __init__(self, gray, line1, line2, length):
-        self.optical_points = {}
+    def __init__(self, gray, line1, line2, length, fps):
         self.vehicles = {}
         self.id_count = 0
         self.lk_params = dict(winSize=(15, 15),
                               maxLevel=2,
                               criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
         self.old_gray = gray
-        self.speedEst = SpeedMeasure(line1, line2, length)
+        self.speedEst = SpeedMeasure(line1, line2, length, fps)
 
     #   Find if points is outside of frame
     def point_outside(self, point, frame_params):
-        ret = False
+        ret = True
         x, y, w, h = frame_params
         x1, y1 = point
         if x < x1 < x + w and y < y1 < y + h:
-            ret = True
+            ret = False
         return ret
 
     #   Update tracker and get speed for each car
@@ -32,34 +31,30 @@ class OpticalPointTracker:
         #   If we already have points to follow
         if self.vehicles.items():
 
-            #   Split id and points
-            points = []
-            ids = []
-            for id, pt in self.optical_points.items():
-                points.append(pt)
-                ids.append(id)
-
             #   Calculate new position of points
-            prepared_optical_points = np.array(points, dtype=np.float32)
-            new_points, _, _ = cv2.calcOpticalFlowPyrLK(self.old_gray, gray_frame,
-                                                        prepared_optical_points, None, **self.lk_params)
-
-            #   Match points and ids
-            new_optical_points = {}
-            for i in range(len(ids)):
-                new_optical_points[ids[i]] = new_points[i]
+            for _, car in self.vehicles.items():
+                prepared_points = np.array([car.get_point()], dtype=np.float32)
+                new_points2, _, _ = cv2.calcOpticalFlowPyrLK(self.old_gray, gray_frame,
+                                                            prepared_points, None, **self.lk_params)
+                car.update_point(new_points2[0])
 
             #   Remove points outside of frame
-            self.optical_points = {}
-            for id, point in new_optical_points.items():
+            ids = []
+            for _, car in self.vehicles.items():
+                point = car.get_point()
+                id = car.get_info()[4]
                 if self.point_outside(point, frame_param):
-                    self.optical_points[id] = point
-                    self.vehicles[id].update_point(point)
-                else:
-                    self.vehicles.pop(id, None)
+                    ids.append(id)
+
+            for id in ids:
+                self.vehicles.pop(id, None)
 
             #   Get point speed
-            speed = self.speedEst.measure_speed(self.optical_points)
+            for _, car in self.vehicles.items():
+                id = car.get_info()[4]
+                pt = car.get_point()
+                speed[id] = self.speedEst.measure_speed2(id, pt)
+
 
         #   Find match rectangles and points
         for rect in objects_rect:
@@ -81,7 +76,6 @@ class OpticalPointTracker:
                 tmp_vehicle = vehicle(rect, self.id_count)
                 tmp_vehicle.create_points(gray_frame)
                 self.vehicles[self.id_count] = tmp_vehicle
-                self.optical_points[self.id_count] = tmp_vehicle.get_point()
                 objects_bbs_ids.append(tmp_vehicle.get_info())
                 speed[self.id_count] = 0
                 self.id_count += 1

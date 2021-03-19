@@ -12,7 +12,6 @@ class CarSpeedEstimator:
         #   Optical flow preparation
         _, frame = self.cap.read()
         old_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        self.tracker = OpticalPointTracker(old_gray, self.first_line, self.second_line, length)
 
         #   Video output preparation
         frame_width = int(self.cap.get(3))
@@ -21,6 +20,7 @@ class CarSpeedEstimator:
                                    30, (frame_width, frame_height))
         self.frame_param = [0, 0, frame_width, frame_height]
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+        self.tracker = OpticalPointTracker(old_gray, self.first_line, self.second_line, length, self.fps)
 
     def run(self):
         while True:
@@ -56,7 +56,7 @@ class CarSpeedEstimator:
             cv2.imshow("frame", frame)
             key = cv2.waitKey(1)
             print(self.frame_counter)
-            if key == 27 or self.frame_counter > self.fps*60:
+            if key == 27 or self.frame_counter > self.fps*50:
                 break
 
         self.cap.release()
