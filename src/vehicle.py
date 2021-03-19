@@ -1,4 +1,5 @@
 from src.LPFinder import *
+import numpy as np
 
 class vehicle:
 
@@ -7,19 +8,23 @@ class vehicle:
         x, y, w, h = rect
         self.area = w * h
         self.point = []
+        self.points = []
         self.id = id
 
     def create_points(self, frame):
         x, y, w, h = self.rect
         object_img = frame[y:y + h, x:x + w]
         self.point = []
-#          Central point
+#           LPFinder
         px, py = FindLP(object_img)
         self.point = [x + px, y + py]
-
+        self.points.append([x + px, y + py])
+#          Central point
+        self.points.append([x + (w//2), y + (h//2)])
 #          Biggest area
 #          Licence plate
 #          Upper part
+        self.points.append([x + (w//2), y + (h//4)])
 
     def check(self, rect):
         ret = False
@@ -40,9 +45,25 @@ class vehicle:
     def update_point(self, points):
         self.point = points
 
+    def update_points(self, points):
+        self.points = points
+        self.point = points[0]
+
     def get_info(self):
         x, y, w, h = self.rect
         return [x, y, self.point[0], self.point[1], self.id]
 
     def update_rect(self, rect):
         self.rect = rect
+
+    def get_prepared_points(self):
+        prepared_points = np.array(self.points, dtype=np.float32)
+        return prepared_points
+
+    def outside(self, frame_param):
+        _, _, w, h = frame_param
+        ret = True
+        for pt in self.points:
+            if 0 < pt[0] < w and 0 < pt[1] < h:
+                ret = False
+        return ret
