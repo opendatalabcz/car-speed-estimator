@@ -14,53 +14,7 @@ class SpeedMeasure:
         p = Point(point[0], point[1])
         return self.area.contains(p)
 
-    # mesure speed for each point
-    def measure_speed(self, points):
-        ret = {}
-        for id, pt in points.items():
-
-            # If point is not new
-            if id in self.list:
-                #   If points is inside of measuring area
-                if self.in_area(pt):
-                    self.list[id][0] = self.list[id][0] + 1
-                    ret[id] = self.list[id][1]
-                else:
-
-                    #   If points just left measuring area
-                    if self.list[id][0] != 0:
-                        self.list[id][1] = int(self.length / (self.list[id][0] / self.fps) * 3.6)
-                        self.list[id][0] = 0
-                ret[id] = self.list[id][1]
-
-            #   If its new add to list a return default number
-            else:
-                self.list[id] = [0, 0]
-                ret[id] = 0
-
-        return ret
-
-    def measure_speed2(self, id, pt):
-        if id in self.list:
-            #   If points is inside of measuring area
-            if self.in_area(pt):
-                self.list[id][0] = self.list[id][0] + 1
-                ret = self.list[id][1]
-            else:
-
-                #   If points just left measuring area
-                if self.list[id][0] != 0:
-                    self.list[id][1] = int(self.length / (self.list[id][0] / self.fps) * 3.6)
-                    self.list[id][0] = 0
-            ret = self.list[id][1]
-
-        #   If its new add to list a return default number
-        else:
-            self.list[id] = [0, 0]
-            ret = 0
-        return ret
-
-    def measure_speed3(self, points, id):
+    def measure_speed(self, points, id):
         cnt = 0
         out = 0
         if not id in self.list:

@@ -29,7 +29,7 @@ class OpticalPointTracker:
                                                             prepared_points, None, **self.lk_params)
                 car.update_points(new_points)
 
-            #   Remove points outside of frame
+            #   Remove vehicles outside of frame
             ids = []
             for _, car in self.vehicles.items():
                 id = car.get_info()[4]
@@ -43,7 +43,7 @@ class OpticalPointTracker:
             for _, car in self.vehicles.items():
                 id = car.get_info()[4]
                 pt = car.get_points()
-                speed[id] = self.speedEst.measure_speed3(pt, id)
+                speed[id] = self.speedEst.measure_speed(pt, id)
 
 
         #   Find match rectangles and points
