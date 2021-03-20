@@ -39,8 +39,8 @@ class vehicle:
             ret = True
         return ret
 
-    def get_point(self):
-        return self.point
+    def get_points(self):
+        return self.points
 
     def update_point(self, points):
         self.point = points

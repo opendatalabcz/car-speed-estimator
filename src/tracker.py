@@ -42,8 +42,8 @@ class OpticalPointTracker:
             #   Get point speed
             for _, car in self.vehicles.items():
                 id = car.get_info()[4]
-                pt = car.get_point()
-                speed[id] = self.speedEst.measure_speed2(id, pt)
+                pt = car.get_points()
+                speed[id] = self.speedEst.measure_speed3(pt, id)
 
 
         #   Find match rectangles and points

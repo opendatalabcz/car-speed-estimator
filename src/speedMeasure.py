@@ -60,3 +60,29 @@ class SpeedMeasure:
             ret = 0
         return ret
 
+    def measure_speed3(self, points, id):
+        cnt = 0
+        out = 0
+        if not id in self.list:
+            self.list[id] = [0, 0, 0, 0]
+            return 0
+
+        for pt in points:
+            cnt += 1
+            #   If points is inside of measuring area
+            if self.in_area(pt):
+                self.list[id][cnt] = self.list[id][cnt] + 1
+            else:
+            #   If point is outside of measuring area
+                out += 1
+
+        #   If all points are outside of measuring area
+        if out == 3:
+            if self.list[id][1] != 0:
+                tmp = 0
+                for i in range (1, 4):
+                    tmp += int(self.length / (self.list[id][i] / self.fps) * 3.6)
+                    self.list[id][i] = 0
+                self.list[id][0] = int(tmp/3)
+
+        return self.list[id][0]

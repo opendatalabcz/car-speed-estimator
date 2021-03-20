@@ -44,6 +44,7 @@ class Root(Tk):
 
     def run(self):
         if self.rd:
+            self.cap = cv2.VideoCapture(self.filename)
             s_line_pt1_x = int(self.s_line_pt1_x.get())
             s_line_pt1_y = int(self.s_line_pt1_y.get())
             s_line_pt2_x = int(self.s_line_pt2_x.get())
