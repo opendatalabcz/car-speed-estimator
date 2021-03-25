@@ -1,5 +1,6 @@
 from src.yoloDetection import object_detection
 from src.tracker import *
+from src.speedMeasure import *
 
 class CarSpeedEstimator:
     def __init__(self, video, start_line, end_line, length):
@@ -20,7 +21,8 @@ class CarSpeedEstimator:
                                    30, (frame_width, frame_height))
         self.frame_param = [0, 0, frame_width, frame_height]
         self.fps = self.cap.get(cv2.CAP_PROP_FPS)
-        self.tracker = OpticalPointTracker(old_gray, self.first_line, self.second_line, length, self.fps)
+        speedEst = SpeedMeasure(self.first_line, self.second_line, length, self.fps)
+        self.tracker = OpticalPointTracker(old_gray, speedEst)
 
     def run(self):
         while True:

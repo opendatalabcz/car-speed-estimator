@@ -20,7 +20,7 @@ class SpeedMeasure:
         if not id in self.list:
             self.list[id] = [0, 0, 0, 0]
             return 0
-
+        print(self.list[id])
         for pt in points:
             cnt += 1
             #   If points is inside of measuring area
@@ -32,7 +32,7 @@ class SpeedMeasure:
 
         #   If all points are outside of measuring area
         if out == 3:
-            if self.list[id][1] != 0:
+            if self.list[id][0] == 0 and self.list[id][1] != 0 and self.list[id][2] != 0 and self.list[id][3] != 0:
                 tmp = 0
                 for i in range (1, 4):
                     tmp += int(self.length / (self.list[id][i] / self.fps) * 3.6)

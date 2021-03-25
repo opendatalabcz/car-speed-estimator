@@ -10,6 +10,7 @@ class vehicle:
         self.point = []
         self.points = []
         self.id = id
+        self.out = 0
 
     def create_points(self, frame):
         x, y, w, h = self.rect
@@ -32,7 +33,7 @@ class vehicle:
         x, y, w, h = rect
 
         for pt in self.points:
-            if x < pt[0] < x + w and y < pt[1] < y + h:
+            if x < pt[0] < x + w and y < pt[1] < y + h :
                 check += 1
 
         if check > 1:
@@ -59,8 +60,21 @@ class vehicle:
 
     def outside(self, frame_param):
         _, _, w, h = frame_param
+        cnt = 0
         ret = True
         for pt in self.points:
-            if 0 < pt[0] < w and 0 < pt[1] < h:
-                ret = False
+            if 0 < pt[0] < w and 0 < pt[1] < h :
+                cnt += 1
+        if cnt == 3:
+            ret = False
         return ret
+
+    def counter(self):
+        ret = False
+        self.out += 1
+        if (self.out > 30):
+            ret = True
+        return ret
+
+    def nullify_counter(self):
+        self.out = 0
