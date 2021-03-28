@@ -1,21 +1,21 @@
 import cv2
 import numpy as np
-from src import LPFinder as LPFinder
 from src.speedMeasure import *
 from src.vehicle import vehicle
 
 class OpticalPointTracker:
-    def __init__(self, gray, speed_measure):
+    def __init__(self, gray, frame_param, speed_measure):
         self.vehicles = {}
         self.id_count = 0
+        self.old_gray = gray
+        self.speedEst = speed_measure
+        self.frame_param = frame_param
         self.lk_params = dict(winSize=(15, 15),
                               maxLevel=2,
                               criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
-        self.old_gray = gray
-        self.speedEst = speed_measure
 
     #   Update tracker and get speed for each car
-    def update(self, objects_rect, gray_frame, frame_param):
+    def update(self, objects_rect, gray_frame):
         objects_bbs_ids = []
         speed = {}
 
@@ -24,7 +24,7 @@ class OpticalPointTracker:
 
             #   Calculate new position of points
             for _, car in self.vehicles.items():
-                prepared_points = car.get_prepared_points()
+                prepared_points = car.get_points()
                 new_points, _, _ = cv2.calcOpticalFlowPyrLK(self.old_gray, gray_frame,
                                                             prepared_points, None, **self.lk_params)
                 car.update_points(new_points)
@@ -33,7 +33,7 @@ class OpticalPointTracker:
             ids = []
             for _, car in self.vehicles.items():
                 id = car.get_info()[4]
-                if car.outside(frame_param):
+                if car.outside(self.frame_param):
                     ids.append(id)
 
             for id in ids:
