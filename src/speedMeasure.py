@@ -4,7 +4,7 @@ from shapely.geometry.polygon import Polygon
 #   Class for measuring speed of vehicles
 class SpeedMeasure:
 
-    #   Cosntructor
+    #   Constructor
     def __init__(self, first_line, second_line, length, fps):
         self.fps = fps
         self.list = {}
