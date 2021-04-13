@@ -16,8 +16,10 @@ Run:
 pip install -r requirements.txt
 ```
 
-## Start
+## Usage
 Run:
 ```
 python run.py
 ```
+
+This will start Gui which will help you put video file and setup measuring parametes
