@@ -74,7 +74,7 @@ class CarSpeedEstimator:
             self.output_video.write(frame)
             cv2.imshow("frame", frame)
             key = cv2.waitKey(1)
-            print(self.frame_counter)
+#            print(self.frame_counter)
             if key == 27 or self.frame_counter == self.n_frames:
                 break
         #   Cleaning

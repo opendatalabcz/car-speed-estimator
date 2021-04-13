@@ -13,4 +13,11 @@ Put them inside src file
 
 Run:
 ```
-pip install -r requirements.txt  
+pip install -r requirements.txt
+```
+
+## Start
+Run:
+```
+python run.py
+```
