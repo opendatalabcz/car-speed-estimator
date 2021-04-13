@@ -10,6 +10,7 @@ class vehicle:
         self.points = []
         self.id = id
         self.out = 0
+        self.speed = 0
 
     #   Create points of interest on vehicle
     def create_points(self, frame):
@@ -80,3 +81,9 @@ class vehicle:
     #   Nullify counter for missing vehicle
     def nullify_counter(self):
         self.out = 0
+
+    def set_speed(self, speed):
+        self.speed = speed
+
+    def get_speed(self):
+        return self.speed

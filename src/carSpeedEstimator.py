@@ -23,9 +23,20 @@ class CarSpeedEstimator:
         #   Tracker preparation
         _, frame = self.cap.read()
         old_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        frame_param = [0, 0, frame_width, frame_height]
+        self.frame_param = [0, 0, frame_width, frame_height]
         speedEst = SpeedMeasure(self.first_line, self.second_line, length, fps)
-        self.tracker = OpticalPointTracker(old_gray, frame_param, speedEst)
+        self.tracker = OpticalPointTracker(old_gray, self.frame_param, speedEst)
+
+    def remove_border_boxes(self, boxes):
+        ret_boxes = []
+        for rect in boxes:
+            stay = False
+            x, y, w, h = rect
+            if 10 < x and 10 < y and x + w < self.frame_param[2] - 10 and y + h < self.frame_param[3] - 10:
+                stay = True
+            if stay:
+                ret_boxes.append(rect)
+        return ret_boxes
 
     def run(self):
         while True:
@@ -34,7 +45,8 @@ class CarSpeedEstimator:
             _, frame = self.cap.read()
 
             #   Detect objects in frame
-            frame, boxes = self.detection.detect_objects(frame, 0.6)
+            frame, boxes = self.detection.detect_objects(frame, 0.5)
+            boxes = self.remove_border_boxes(boxes)
 
             #   Update tracker
             gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -47,15 +59,16 @@ class CarSpeedEstimator:
             #   Draw object bounding boxes
             for box in boxes:
                 x, y, w, h = box
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 250), 2)
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (250, 0, 0), 2)
 
             #   Show vehicle speed
             for box_id in boxes_ids:
                 x, y, px, py, id = box_id
+                text = str(id)
                 if speed[id] != 0:
-                    text = str(speed[id])
-                    cv2.putText(frame, text, (x, y - 15), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
-                cv2.circle(frame, (px, py), 3, (0, 255, 0), -1)
+                    text += ": "
+                    text += str(speed[id])
+                cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
 
             #   Show and save frame
             self.output_video.write(frame)
@@ -66,5 +79,6 @@ class CarSpeedEstimator:
                 break
         #   Cleaning
         self.cap.release()
+        self.tracker.create_csv()
         cv2.destroyAllWindows()
         print("Done")

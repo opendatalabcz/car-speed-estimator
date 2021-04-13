@@ -9,8 +9,12 @@ class SpeedMeasure:
         self.fps = fps
         self.list = {}
         self.length = length
-        self.area = Polygon([first_line[0], first_line[1], second_line[1], second_line[0]])
-
+        area1 = Polygon([first_line[0], first_line[1], second_line[0], second_line[1]])
+        area2 = Polygon([first_line[0], first_line[1], second_line[1], second_line[0]])
+        if area1.area > area2.area:
+            self.area = area1
+        else:
+            self.area = area2
     #   Function for checking if point is in measured area
     def in_area(self, point):
         p = Point(point[0], point[1])

@@ -2,10 +2,12 @@ import cv2
 import numpy as np
 from src.speedMeasure import *
 from src.vehicle import vehicle
+import csv
 
 class OpticalPointTracker:
     def __init__(self, gray, frame_param, speed_measure):
         self.vehicles = {}
+        self.vehicles_out = {}
         self.id_count = 0
         self.old_gray = gray
         self.speedEst = speed_measure
@@ -14,7 +16,7 @@ class OpticalPointTracker:
                               maxLevel=2,
                               criteria=(cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
-    #   Update tracker and get speed for each car
+        #   Update tracker and get speed for each car
     def update(self, objects_rect, gray_frame):
         objects_bbs_ids = []
         speed = {}
@@ -37,13 +39,15 @@ class OpticalPointTracker:
                     ids.append(id)
 
             for id in ids:
+                self.vehicles_out[id] = self.vehicles[id].get_speed()
                 self.vehicles.pop(id, None)
 
             #   Get point speed
             for _, car in self.vehicles.items():
                 id = car.get_info()[4]
                 pt = car.get_points()
-                speed[id] = self.speedEst.measure_speed(pt, id)
+                car.set_speed(self.speedEst.measure_speed(pt, id))
+                speed[id] = car.get_speed()
 
 
         #   Find match rectangles and points
@@ -76,9 +80,17 @@ class OpticalPointTracker:
                     ids.append(car.get_info()[4])
 
             for id in ids:
+                self.vehicles_out[id] = self.vehicles[id].get_speed()
                 self.vehicles.pop(id, None)
 
 
         #   Save frame for next step
         self.old_gray = gray_frame
         return objects_bbs_ids, speed
+
+    def create_csv(self):
+        with open('Result.csv', 'w') as f:
+            f.write("Id, Speed\n")
+            for key in self.vehicles_out.keys():
+                f.write("%s,%s\n" % (key, self.vehicles_out[key]))
+
