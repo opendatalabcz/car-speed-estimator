@@ -1,12 +1,14 @@
 import cv2
 import numpy as np
+import os
 
 class object_detection:
 
     def __init__(self):
-        self.net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
+        location = os.path.realpath(os.path.join(os.getcwd()))
+        self.net = cv2.dnn.readNet(location + "/yolov3.weights", location + "/yolov3.cfg")
         self.classes = []
-        with open("coco.names", "r") as f:
+        with open(location + "/coco.names", "r") as f:
             self.classes = [line.strip() for line in f.readlines()]
         layer_names = self.net.getLayerNames()
         self.outputlayers = [layer_names[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
