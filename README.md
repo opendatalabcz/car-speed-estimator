@@ -23,3 +23,6 @@ python run.py
 ```
 
 This will start Gui which will help you put video file and setup measuring parametes
+
+For getting my test data you may use this link:
+[Test data](https://www.dropbox.com/sh/e7p0bx68zmq24tf/AAARDee2y2o7i1615U7_kpRma?dl=0)
