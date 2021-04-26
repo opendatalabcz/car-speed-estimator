@@ -1,28 +1,35 @@
 from src.LPFinder import *
 import numpy as np
+import cv2
+
 
 #   Class for vehicles founded in video file
 class vehicle:
 
     #   Constructor
     def __init__(self, rect, id):
-        self.rect = rect
+        self.rect = (rect[0], rect[1], rect[2], rect[3])
         self.points = []
         self.id = id
         self.out = 0
         self.speed = 0
+        self.tracker = None
+
+    def create_tracker(self, frame):
+        self.tracker = cv2.TrackerKCF_create()
+        self.tracker.init(frame, self.rect)
 
     #   Create points of interest on vehicle
     def create_points(self, frame):
         x, y, w, h = self.rect
         object_img = frame[y:y + h, x:x + w]
-#           LPFinder
+        #           LPFinder
         px, py = FindLP(object_img)
         self.points.append([x + px, y + py])
-#          Central point
-        self.points.append([x + (w//2), y + (h//2)])
-#          Upper part
-        self.points.append([x + (w//2), y + (h//4)])
+        #          Central point
+        self.points.append([x + (w // 2), y + (h // 2)])
+        #          Upper part
+        self.points.append([x + (w // 2), y + (h // 4)])
         self.points = np.array(self.points, dtype=np.float32)
 
     #   Return if rectangle can be from this vehicle
@@ -33,7 +40,7 @@ class vehicle:
 
         #   Check if points are inside rectangle
         for pt in self.points:
-            if x < pt[0] < x + w and y < pt[1] < y + h :
+            if x < pt[0] < x + w and y < pt[1] < y + h:
                 check += 1
 
         #   If at least 2 points are inside then return true
@@ -54,9 +61,16 @@ class vehicle:
         x, y, _, _ = self.rect
         return [x, y, self.points[0][0], self.points[0][1], self.id]
 
+    def get_info2(self):
+        x, y, w, h = self.rect
+        return [x, y, w, h, self.id]
+
     #   Update vehicle rectangle
     def update_rect(self, rect):
         self.rect = rect
+
+    def update_rect2(self, frame):
+        _, self.rect = self.tracker.update(frame)
 
     #   Return if vehicle is outside of frame
     def outside(self, frame_param):
@@ -64,7 +78,7 @@ class vehicle:
         cnt = 0
         ret = True
         for pt in self.points:
-            if 0 < pt[0] < w and 0 < pt[1] < h :
+            if 0 < pt[0] < w and 0 < pt[1] < h:
                 cnt += 1
         if cnt == 3:
             ret = False
@@ -87,3 +101,7 @@ class vehicle:
 
     def get_speed(self):
         return self.speed
+
+    def get_rectCenter(self):
+        x, y, w, h = self.rect
+        return ([x + (w // 2), y + (h // 2)])
