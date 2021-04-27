@@ -34,7 +34,7 @@ class OpticalPointTracker:
             #   Remove vehicles outside of frame
             ids = []
             for _, car in self.vehicles.items():
-                id = car.get_info()[4]
+                id = car.get_info()[3]
                 if car.outside(self.frame_param):
                     ids.append(id)
 
@@ -44,7 +44,7 @@ class OpticalPointTracker:
 
             #   Get point speed
             for _, car in self.vehicles.items():
-                id = car.get_info()[4]
+                id = car.get_info()[3]
                 pt = car.get_points()
                 car.set_speed(self.speedEst.measure_speed(pt, id))
                 speed[id] = car.get_speed()
@@ -77,7 +77,7 @@ class OpticalPointTracker:
             ids = []
             for _, car in self.vehicles.items():
                 if car.counter() :
-                    ids.append(car.get_info()[4])
+                    ids.append(car.get_info()[3])
 
             for id in ids:
                 self.vehicles_out[id] = self.vehicles[id].get_speed()
@@ -86,70 +86,6 @@ class OpticalPointTracker:
 
         #   Save frame for next step
         self.old_gray = gray_frame
-        return objects_bbs_ids, speed
-
-    def create_csv(self):
-        with open('Result.csv', 'w') as f:
-            f.write("Id, Speed\n")
-            for key in self.vehicles_out.keys():
-                f.write("%s,%s\n" % (key, self.vehicles_out[key]))
-
-
-class KcfTracker:
-    def __init__(self, speed_measure):
-        self.vehicles = {}
-        self.vehicles_out = {}
-        self.id_count = 0
-        self.speedEst = speed_measure
-
-    def update(self, objects_rect, frame):
-        objects_bbs_ids = []
-        speed = {}
-
-        points = []
-
-        if self.vehicles.items():
-            print("-----------------")
-            #   Update trackers
-            for _, car in self.vehicles.items():
-                car.update_rect2(frame)
-                points.append(car.get_rectCenter())
-                info = car.get_info2()
-                print(info)
-                if not info[0] == 0:
-                    objects_bbs_ids.append(info)
-
-        #   Find match rectangles and points
-        for rect in objects_rect:
-            x, y, w, h = rect
-            # Find out if that object was detected already
-            same_object_detected = False
-            for point in points:
-                if x < point[0] < x + w and y < point[1] < y + h:
-                    same_object_detected = True
-                    break
-
-            # If new object is detected we assign the ID to that object
-            if same_object_detected is False:
-                tmp_vehicle = vehicle(rect, self.id_count)
-                tmp_vehicle.create_tracker(frame)
-                self.vehicles[self.id_count] = tmp_vehicle
-                objects_bbs_ids.append(tmp_vehicle.get_info2())
-                speed[self.id_count] = 0
-                self.id_count += 1
-
-        if self.vehicles.items():
-            ids = []
-            for _, car in self.vehicles.items():
-                if car.counter() :
-                    ids.append(car.get_info2()[4])
-
-            for id in ids:
-                self.vehicles_out[id] = self.vehicles[id].get_speed()
-                self.vehicles.pop(id, None)
-
-
-        #   Save frame for next step
         return objects_bbs_ids, speed
 
     def create_csv(self):

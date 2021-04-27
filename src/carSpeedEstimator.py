@@ -1,6 +1,7 @@
 from src.yoloDetection import object_detection
 from src.tracker import *
 from src.speedMeasure import *
+from src.CTests.KcfTracker import *
 
 #   Starting class.
 class CarSpeedEstimator:
@@ -46,7 +47,7 @@ class CarSpeedEstimator:
             _, frame = self.cap.read()
 
             #   Detect objects in frame
-            frame, boxes = self.detection.detect_objects(frame, 0.5)
+            frame, boxes = self.detection.detect_objects(frame, 0.6)
             boxes = self.remove_border_boxes(boxes)
 
             #   Update tracker
@@ -64,11 +65,13 @@ class CarSpeedEstimator:
 
             #   Show vehicle speed
             for box_id in boxes_ids:
-                x, y, px, py, id = box_id
+                x, y, points, id = box_id
                 text = str(id)
                 if speed[id] != 0:
                     text += ": "
                     text += str(speed[id])
+                for pt in points:
+                    cv2.circle(frame, (pt[0], pt[1]), 2, (0, 0, 255), 2)
                 cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
 
             #   Show and save frame
@@ -76,7 +79,7 @@ class CarSpeedEstimator:
             cv2.imshow("frame", frame)
             key = cv2.waitKey(1)
 #            print(self.frame_counter)
-            if key == 27 or self.frame_counter == self.n_frames:
+            if key == 27 or self.frame_counter == self.n_frames - 1:
                 break
         #   Cleaning
         self.cap.release()
@@ -88,7 +91,7 @@ class CarSpeedEstimator:
         while True:
             #   Get new frame
             self.frame_counter = self.frame_counter + 1
-            _, frame = self.cap.read()
+            err, frame = self.cap.read()
 
             #   Detect objects in frame
             frame, boxes = self.detection.detect_objects(frame, 0.5)
@@ -113,7 +116,7 @@ class CarSpeedEstimator:
             cv2.imshow("frame", frame)
             key = cv2.waitKey(1)
 #            print(self.frame_counter)
-            if key == 27 or self.frame_counter == self.n_frames:
+            if key == 27 or self.frame_counter == self.n_frames - 1:
                 break
         #   Cleaning
         self.cap.release()

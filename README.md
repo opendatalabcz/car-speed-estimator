@@ -2,6 +2,8 @@
 Car speed estimating from single camera using YoloV3 and Optical Flow
 
 ## Setup
+For aplication to work you need Python version at least 3.8.
+
 Download the trained weights of the models and configurations:
 - [yoloV3.weights](https://pjreddie.com/media/files/yolov3.weights)
 - [YoloV3.cfg](https://github.com/pjreddie/darknet/blob/master/cfg/yolov3.cfg)

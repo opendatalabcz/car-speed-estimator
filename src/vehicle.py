@@ -13,11 +13,6 @@ class vehicle:
         self.id = id
         self.out = 0
         self.speed = 0
-        self.tracker = None
-
-    def create_tracker(self, frame):
-        self.tracker = cv2.TrackerKCF_create()
-        self.tracker.init(frame, self.rect)
 
     #   Create points of interest on vehicle
     def create_points(self, frame):
@@ -35,7 +30,7 @@ class vehicle:
     #   Return if rectangle can be from this vehicle
     def check(self, rect):
         ret = False
-        check = 0;
+        check = 0
         x, y, w, h = rect
 
         #   Check if points are inside rectangle
@@ -59,18 +54,11 @@ class vehicle:
     #   Return information about vehicle
     def get_info(self):
         x, y, _, _ = self.rect
-        return [x, y, self.points[0][0], self.points[0][1], self.id]
-
-    def get_info2(self):
-        x, y, w, h = self.rect
-        return [x, y, w, h, self.id]
+        return [x, y, self.points, self.id]
 
     #   Update vehicle rectangle
     def update_rect(self, rect):
         self.rect = rect
-
-    def update_rect2(self, frame):
-        _, self.rect = self.tracker.update(frame)
 
     #   Return if vehicle is outside of frame
     def outside(self, frame_param):
@@ -101,7 +89,3 @@ class vehicle:
 
     def get_speed(self):
         return self.speed
-
-    def get_rectCenter(self):
-        x, y, w, h = self.rect
-        return ([x + (w // 2), y + (h // 2)])
