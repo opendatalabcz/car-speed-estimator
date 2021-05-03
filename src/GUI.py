@@ -134,8 +134,7 @@ class GUI(Tk):
         self.line2_btn.grid(column=0, columnspan=2, row=9)
         self.len_txt.grid(column=0, row=10)
         self.len.grid(column=1, row=10)
-        self.line_button.grid(column=0, row=12)
-        self.show_param_btn.grid(column=1, row=12)
+        self.show_param_btn.grid(column=0, columnspan=2, row=13)
 
     def fileDialog(self):
 
@@ -266,6 +265,7 @@ class GUI(Tk):
             self.line1_y_txt.grid(column=1, row=1)
             self.line2_x_txt.grid(column=0, row=6)
             self.line2_y_txt.grid(column=1, row=6)
+            self.line_button.grid(column=0, columnspan=2, row=12)
         else:
             self.s_line_pt1_x.grid_forget()
             self.s_line_pt1_y.grid_forget()
@@ -279,4 +279,5 @@ class GUI(Tk):
             self.line1_y_txt.grid_forget()
             self.line2_x_txt.grid_forget()
             self.line2_y_txt.grid_forget()
+            self.line_button.grid_forget()
         return
