@@ -92,4 +92,5 @@ class OpticalPointTracker:
         with open('Result.csv', 'w') as f:
             f.write("Id, Speed\n")
             for key in self.vehicles_out.keys():
-                f.write("%s,%s\n" % (key, self.vehicles_out[key]))
+                if (self.vehicles_out[key]):
+                    f.write("%s,%s\n" % (key, self.vehicles_out[key]))

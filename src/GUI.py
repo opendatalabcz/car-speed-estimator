@@ -67,7 +67,7 @@ class GUI(Tk):
 
         #   Try get information about length of measuring area
         try:
-            length = int(self.len.get())
+            length = float(self.len.get())
         except ValueError:
             self.w_label['text'] = "missing length"
             return
