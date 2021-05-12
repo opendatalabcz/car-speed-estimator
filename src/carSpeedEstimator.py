@@ -1,7 +1,6 @@
 from src.yoloDetection import object_detection
 from src.tracker import *
 from src.speedMeasure import *
-from src.CTests.KcfTracker import *
 
 #   Starting class.
 class CarSpeedEstimator:
@@ -27,7 +26,6 @@ class CarSpeedEstimator:
         self.frame_param = [0, 0, frame_width, frame_height]
         speedEst = SpeedMeasure(self.first_line, self.second_line, length, fps)
         self.tracker = OpticalPointTracker(old_gray, self.frame_param, speedEst)
-        self.tracker2 = KcfTracker(speedEst)
 
     def remove_border_boxes(self, boxes):
         ret_boxes = []
@@ -72,43 +70,6 @@ class CarSpeedEstimator:
                     text += str(speed[id])
                 for pt in points:
                     cv2.circle(frame, (pt[0], pt[1]), 2, (0, 0, 255), 2)
-                cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
-
-            #   Show and save frame
-            self.output_video.write(frame)
-            cv2.imshow("frame", frame)
-            key = cv2.waitKey(1)
-#            print(self.frame_counter)
-            if key == 27 or self.frame_counter == self.n_frames - 1:
-                break
-        #   Cleaning
-        self.cap.release()
-        self.tracker.create_csv()
-        cv2.destroyAllWindows()
-        print("Done")
-
-    def run2(self):
-        while True:
-            #   Get new frame
-            self.frame_counter = self.frame_counter + 1
-            err, frame = self.cap.read()
-
-            #   Detect objects in frame
-            frame, boxes = self.detection.detect_objects(frame, 0.5)
-            boxes = self.remove_border_boxes(boxes)
-
-            #   Update tracker
-            boxes, speed = self.tracker2.update(boxes, frame)
-
-            #   Draw Lines of measured area
-            cv2.line(frame, self.first_line[0], self.first_line[1], (0, 0, 250), 2)
-            cv2.line(frame, self.second_line[0], self.second_line[1], (0, 0, 250), 2)
-
-            #   Draw object bounding boxes
-            for box in boxes:
-                x, y, w, h, id = box
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (250, 0, 0), 2)
-                text = str(id)
                 cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 250), 2)
 
             #   Show and save frame
